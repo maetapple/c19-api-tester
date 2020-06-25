@@ -146,6 +146,7 @@ class _APIRequestState extends State<MyHomePage> {
                     // int index = Random.secure().nextInt(snapshot.data._prefectures.length - 1);
                     // String name = snapshot.data._prefectures[index].name;
 
+                    //取得したデータをほかのウィジェットでも使えるように保存。
                     data = snapshot.data._prefectures;
 
                     return _viewData(data);
@@ -182,13 +183,14 @@ class _APIRequestState extends State<MyHomePage> {
                   ),
                 ),
               ),
-              onTap: (){
-                int temp = index;
-                print(data[temp].name + ' is selected');
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return _modalDisplay(data: data[index]);
+                    },
+                    fullscreenDialog: true));
               },
-              onLongPress: (){
-
-              },
+              onLongPress: () {},
             );
           }),
     );
@@ -216,6 +218,45 @@ class _APIRequestState extends State<MyHomePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+//選択された県の症例数と死亡数のモーダル表示
+class _modalDisplay extends StatelessWidget {
+  _modalDisplay({Key key, this.data}) : super(key: key);
+
+  Prefecture data;
+
+  final _textStyle = const TextStyle(fontSize: 25.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(data.name),
+      ),
+      body: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  '症例数: ' + data.caseNum.toString(),
+                  style: _textStyle,
+                  textAlign: TextAlign.left),
+                Text(
+                  '死亡数: ' + data.deathNum.toString(),
+                  style: _textStyle,
+                  textAlign: TextAlign.left)
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
