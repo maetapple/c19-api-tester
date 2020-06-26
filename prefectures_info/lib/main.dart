@@ -113,6 +113,8 @@ class _APIRequestState extends State<MyHomePage> {
   List<Prefecture> data;
   bool _active = false;
 
+  final ScrollController controller = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -135,6 +137,14 @@ class _APIRequestState extends State<MyHomePage> {
       home: Scaffold(
         appBar: AppBar(
           title: Text('COVID-19 Prefecture Info'),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.keyboard_arrow_up),
+          onPressed: () {
+            controller.animateTo(0.0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut);
+          },
         ),
         body: Container(
           child: Column(
@@ -168,6 +178,7 @@ class _APIRequestState extends State<MyHomePage> {
   Widget _viewData(List<Prefecture> data) {
     return new Expanded(
       child: ListView.builder(
+          controller: controller,
           itemCount: data.length,
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
@@ -239,20 +250,55 @@ class _modalDisplay extends StatelessWidget {
       ),
       body: Container(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            SizedBox(width: 60.0),
             Column(
               mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  '症例数: ' + data.caseNum.toString(),
-                  style: _textStyle,
-                  textAlign: TextAlign.left),
-                Text(
-                  '死亡数: ' + data.deathNum.toString(),
-                  style: _textStyle,
-                  textAlign: TextAlign.left)
+                SizedBox(height: 40.0),
+                Container(
+                  decoration: new BoxDecoration(
+                    border: new Border(
+                        bottom: BorderSide(width: 3.0, color: Colors.blue)),
+                  ),
+                  width: 285.0,
+                  child: Text(data.name, style: _textStyle),
+                ),
+                SizedBox(height: 10.0),
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      SizedBox(width: 25.0,),
+                      //症例数と死亡数だけだと寂しいので緯度と経度も出しておいてみる。
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                              '緯度　: ' +
+                                  ((data.lattitude * 100).ceilToDouble() / 100)
+                                      .toString(),
+                              style: _textStyle),
+                          SizedBox(height: 10.0),
+                          Text(
+                              '経度　: ' +
+                                  ((data.longitude * 100).ceilToDouble() / 100)
+                                      .toString(),
+                              style: _textStyle),
+                          SizedBox(height: 10.0),
+                          Text('症例数: ' + data.caseNum.toString(),
+                              style: _textStyle),
+                          SizedBox(height: 10.0),
+                          Text('死亡数: ' + data.deathNum.toString(),
+                              style: _textStyle),
+                          SizedBox(height: 10.0),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ],
